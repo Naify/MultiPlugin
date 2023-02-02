@@ -67,6 +67,13 @@ void USessionsSubsystem::CreateSession(int32 NumPublicConnections, FString Match
         SessionInterface->ClearOnCreateSessionCompleteDelegate_Handle(CreateSessionCompleteDelegateHandle);
         MultiplayerOnCreateSessionComplete.Broadcast(false);
     }
+
+    if (GEngine)
+    {
+        GEngine->AddOnScreenDebugMessage(
+            -1, 15.f, FColor::Blue,
+            FString::Printf(TEXT("Session created")));
+    }
 }
 
 void USessionsSubsystem::FindSessions(int32 MaxSearchResults)
@@ -83,6 +90,7 @@ void USessionsSubsystem::FindSessions(int32 MaxSearchResults)
     LastSessionSearch->MaxSearchResults = MaxSearchResults;
     LastSessionSearch->bIsLanQuery = IOnlineSubsystem::Get()->GetSubsystemName() == "NULL" ? true : false;
     LastSessionSearch->QuerySettings.Set(SEARCH_PRESENCE, true, EOnlineComparisonOp::Equals);
+    //LastSessionSettings->bUseLobbiesIfAvailable = true;
 
     const ULocalPlayer *LocalPlayer = GetWorld()->GetFirstLocalPlayerFromController();
     if (!SessionInterface->FindSessions(*LocalPlayer->GetPreferredUniqueNetId(), LastSessionSearch.ToSharedRef()))
